@@ -1,7 +1,10 @@
 library(shiny)
 library(shinydashboard)
 library(plotly)
-library(googleVis)
+library(randomForest)
+library(quantregForest)
+library(dplyr)
+
 load("GE Dashboard.RData")
 
 colnames(df.ge) <- c("Purchasing Document", "Vendor", "Material Number", "Plnt", "ABC Indicator", "Quantity", "Pdt",
