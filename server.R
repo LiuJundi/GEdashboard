@@ -4,6 +4,7 @@ library(plotly)
 library(randomForest)
 library(quantregForest)
 library(dplyr)
+library(DT)
 
 load("GE Dashboard.RData")
 
@@ -11,7 +12,7 @@ colnames(df.ge) <- c("Purchasing Document", "Vendor", "Material Number", "Plnt",
                      "PO Cycle Time", "Purchase Order Date", "Open PO")
 
 server <- function(input, output, session) {
-  output$OpenOrdersTable = renderDataTable({
+  output$OpenOrdersTable = DT::renderDataTable({
     df.ge
-  }, options = list(scrollX = TRUE, autoWidth = TRUE))
+  })
 }
