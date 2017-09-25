@@ -1,9 +1,8 @@
 library(shiny)
 library(shinydashboard)
 library(plotly)
+library(googleVis)
 load("GE Dashboard.RData")
-
-OpenOrdersTable <- df.ge
 
 # Notification menu
 notifications <- dropdownMenu(type = "notifications",
@@ -30,13 +29,10 @@ sidebar <- dashboardSidebar(
 body <- dashboardBody(
   tabItems(
     tabItem(tabName = "plots",
-            p("Interactive Plots")
-    ),
+            p("Interactive Plots")),
     tabItem(tabName = "table",
-            p("Data Table"),
             dataTableOutput("OpenOrdersTable")),
-    tabItem(tabName = "predictions"
-    )
+    tabItem(tabName = "predictions")
   )
 )
 
