@@ -3,6 +3,8 @@ library(shinydashboard)
 library(plotly)
 library(randomForest)
 library(quantregForest)
+library(dplyr)
+library(DT)
 load("GE Dashboard.RData")
 
 # Notification menu
@@ -32,7 +34,7 @@ body <- dashboardBody(
     tabItem(tabName = "plots",
             box(title = "Bar Chart for Open Orders", status = "primary", plotlyOutput(outputId = "barchart"), width = 12)),
     tabItem(tabName = "table",
-            dataTableOutput("OpenOrdersTable")),
+            box(DT::dataTableOutput('OpenOrdersTable'), width = "100%" , height = "100%")),
     tabItem(tabName = "predictions")
   )
 )
