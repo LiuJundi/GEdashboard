@@ -32,7 +32,12 @@ sidebar <- dashboardSidebar(
 body <- dashboardBody(
   tabItems(
     tabItem(tabName = "plots",
-            box(title = "Bar Chart for Open Orders", status = "primary", plotlyOutput(outputId = "barchart"), width = 12)),
+            box(title = "Bar Chart for Open Orders", status = "primary", plotlyOutput(outputId = "barchart"), width = "100%"),
+            box(title = "", status = "primary", verbatimTextOutput("hover"), width = "100%"),
+            box(title = "You select:", DT::dataTableOutput('click'), width = "100%" , height = "100%")
+#            box(title = "", status = "primary", verbatimTextOutput("brush"), width = "100%"),
+#            box(title = "", status = "primary", verbatimTextOutput("zoom"), width = "100%")
+            ),
     tabItem(tabName = "table",
             box(DT::dataTableOutput('OpenOrdersTable'), width = "100%" , height = "100%")),
     tabItem(tabName = "predictions")
