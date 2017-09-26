@@ -28,19 +28,15 @@ server <- function(input, output, session) {
   }, options = list(scrollX = TRUE, autoWidth = TRUE))
   
   output$barchart = renderPlotly({
-    plot_ly(ge.bar, x = ~OrderDate, y = ~NumberofOrders, type = 'bar') %>% 
-      layout(margin = list(b = 70), xaxis= list(title = "Order Date", tickangle = -45), dragmode = "select")
-  })
-  
-  output$hover <- renderPrint({
-    d <- event_data("plotly_hover")
-    if (is.null(d)) "Hover events appear here (unhover to clear)" else {
-      cat("Date: ")
-      cat(as.data.frame(d)$x)
-      cat('\n')
-      cat('Number of Open Orders: ')
-      cat(as.data.frame(d)$y)
-    }
+    plot_ly(ge.bar) %>%
+      add_trace(x = ~OrderDate, y = ~NumberofOrders, type = 'bar', hoverinfo = 'text', marker=list(color="darkslateblue"),
+                text = ~paste('Date: ', OrderDate,
+                              ' Number of Open Orders: ', NumberofOrders)) %>% 
+      add_trace(x = ~OrderDate, y = ~NumberofOrders, type = 'scatter', hoverinfo = 'text',
+                text = ~paste('Date: ', OrderDate,
+                              ' Number of Open Orders: ', NumberofOrders), mode = "marker",
+                marker=list(color="darkslateblue", opacity=0.00001)) %>%
+      layout(margin = list(b = 70), xaxis= list(title = "Order Date", tickangle = -45), dragmode = "select", showlegend = FALSE)
   })
   
   output$click <- DT::renderDataTable({
@@ -51,4 +47,17 @@ server <- function(input, output, session) {
     }
   })
   
+  output$brush <- DT::renderDataTable({
+    d <- event_data("plotly_selected")
+    if (is.null(d)) NULL else {
+      tmp <- ge.bar$OrderDate[as.list(d)$x+1]
+      tmp <- as.Date(tmp, format = "%b %d,%y")
+      df.ge[df.ge$`Purchase Order Date` == tmp,]
+    }
+  })
+  
+  output$zoom <- renderPrint({
+    d <- event_data("plotly_relayout")
+    if (is.null(d)) "Relayout (i.e., zoom) events appear here" else d
+  })
 }
