@@ -5,6 +5,7 @@ library(randomForest)
 library(quantregForest)
 library(dplyr)
 library(DT)
+
 load("GE Dashboard.RData")
 
 #Change format to date
@@ -19,7 +20,12 @@ ge.bar$OrderDate <- factor(ge.bar$OrderDate, levels = ge.bar[["OrderDate"]])
 #Naming and reordering columns for the table
 colnames(df.ge) <- c("Purchasing Document", "Vendor", "Material Number", "Plant ID", "ABC Indicator", "Quantity", "Planned Delivery Time",
                      "Actual Delivery Time", "Purchase Order Date", "Open PO", "Predicted Delivery Date")
-df.ge <- df.ge[,c(1,2,3,4,5,9,11,7,8,10)]
+df.ge <- df.ge[,c(1,2,3,4,5,6,9,11,7,8,10)]
+
+#Variables used to display predictions
+upperPred <- 0
+middlePred <- 0
+lowerPred <- 0
 
 
 server <- function(input, output, session) {
@@ -59,5 +65,42 @@ server <- function(input, output, session) {
   output$zoom <- renderPrint({
     d <- event_data("plotly_relayout")
     if (is.null(d)) "Relayout (i.e., zoom) events appear here" else d
+  })
+  
+  #Prediction tab
+  observeEvent(input$predictButton, {
+    df.temp <- df.ge[0,c(4,5,6,9)] #plant, abc, quantity, pdt
+    df.temp[1,1] <- 3267
+    df.temp[1,2] <- df.ge$`ABC Indicator`[df.ge$`Material Number`==input$predictMaterial][1]
+    df.temp[1,3] <- input$predictQuantity
+    df.temp[1,4] <- input$predictPdt
+    colnames(df.temp) <- c("Plnt", "ABC.Indicator", "Quantity", "Pdt")
+    
+    pred.temp <- predict(rf.quantReg,newdata = df.temp[,c(2,3,4)],what=c(0.025,0.975))
+    
+    upperPred <- pred.temp[2]
+    middlePred <- predict(rf.reg, newdata = df.temp)
+    lowerPred <- pred.temp[1]
+    
+    output$lowerPrediction <- renderValueBox({
+      valueBox(
+        paste0(lowerPred), "Lower Prediction Interval", icon = icon("list"),
+        color = "purple"
+      )
+    })
+    
+    output$actualPrediction <- renderValueBox({
+      valueBox(
+        paste0(middlePred), "Predicted Delivery Days", icon = icon("list"),
+        color = "purple"
+      )
+    })
+    
+    output$upperPrediction <- renderValueBox({
+      valueBox(
+        paste0(upperPred), "Upper Prediction Interval", icon = icon("list"),
+        color = "purple"
+      )
+    })
   })
 }

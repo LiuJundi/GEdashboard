@@ -5,6 +5,7 @@ library(randomForest)
 library(quantregForest)
 library(dplyr)
 library(DT)
+
 load("GE Dashboard.RData")
 
 # Notification menu
@@ -39,7 +40,17 @@ body <- dashboardBody(
             ),
     tabItem(tabName = "table",
             box(DT::dataTableOutput('OpenOrdersTable'), width = "100%" , height = "100%")),
-    tabItem(tabName = "predictions")
+    tabItem(tabName = "predictions",
+            valueBoxOutput("lowerPrediction"),
+            valueBoxOutput("actualPrediction"),
+            valueBoxOutput("upperPrediction"),
+            box(actionButton("predictButton", "Click Me"),
+                selectInput(inputId = "predictMaterial", label = "Material to predict:", choices = sort(unique(df.ge$Material.Number))),
+                selectInput(inputId = "predictPlant", label = "Plant ID:", choices = sort(unique(df.ge$Plnt))),
+                numericInput(inputId = "predictQuantity", label = "Quantity:", value = 1),
+                numericInput(inputId = "predictPdt", label = "Planned delivery time (in days):", value = 1)
+                )
+            )
   )
 )
 
