@@ -1,7 +1,8 @@
 library(shiny)
 library(shinydashboard)
 library(plotly)
-library(googleVis)
+library(randomForest)
+library(quantregForest)
 load("GE Dashboard.RData")
 
 # Notification menu
@@ -29,7 +30,7 @@ sidebar <- dashboardSidebar(
 body <- dashboardBody(
   tabItems(
     tabItem(tabName = "plots",
-            p("Interactive Plots")),
+            box(title = "Bar Chart for Open Orders", status = "primary", plotlyOutput(outputId = "barchart"), width = 12)),
     tabItem(tabName = "table",
             dataTableOutput("OpenOrdersTable")),
     tabItem(tabName = "predictions")
