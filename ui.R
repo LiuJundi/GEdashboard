@@ -23,7 +23,8 @@ header <- dashboardHeader(title = "GE Dashboard Demo", notifications)
 # Sidebar menu
 sidebar <- dashboardSidebar(
   sidebarMenu(
-    menuItem("Interactive Plots", tabName = "plots", icon = icon("bar-chart")),
+    menuItem("Purchase Order Date Plots", tabName = "od_plots", icon = icon("bar-chart")),
+    menuItem("Estimated Delivery Date Plots", tabName = "pdd_plots", icon = icon("bar-chart")),
     menuItem("Data Table", tabName = "table", icon = icon("table")),
     menuItem("Predictions", tabName = "predictions", icon = icon("info-circle"))
   )
@@ -32,12 +33,28 @@ sidebar <- dashboardSidebar(
 # Body
 body <- dashboardBody(
   tabItems(
-    tabItem(tabName = "plots",
-            box(title = "Bar Chart for Open Orders", status = "primary", plotlyOutput(outputId = "barchart"), width = "100%"),
-            box(title = "You select:", DT::dataTableOutput('click'), width = "100%" , height = "100%"),
-            box(title = "You select:", DT::dataTableOutput('brush'), width = "100%" , height = "100%"),
-            box(title = "", status = "primary", verbatimTextOutput("zoom"), width = "100%")
+    tabItem(tabName = "od_plots",
+            box(title = "Bar Chart for Open Orders", plotlyOutput(outputId = "od_barchart"), width = "100%"),
+            box(title = 'Please select the date range: ', dateRangeInput("purchase_date", NULL,
+                                                                         start  = "2017-02-15",
+                                                                         end    = "2017-04-24",
+                                                                         min    = "2016-01-01",
+                                                                         max    = "2017-12-31",
+                                                                         separator = " - "), width = "100%", height = "100%"),
+            box(title = "You select (by clicking):", DT::dataTableOutput('od_click'), width = "100%" , height = "100%"),
+            box(title = "You select (by brushing):", DT::dataTableOutput('od_brush'), width = "100%" , height = "100%")
             ),
+    tabItem(tabName = "pdd_plots",
+              box(title = "Bar Chart for Open Orders", plotlyOutput(outputId = "pdd_barchart"), width = "100%"),
+              box(title = 'Please select the date range: ', dateRangeInput("deliver_date", NULL,
+                                                                           start  = "2017-04-15",
+                                                                           end    = "2017-08-17",
+                                                                           min    = "2016-01-01",
+                                                                           max    = "2017-12-31",
+                                                                           separator = " - "), width = "100%", height = "100%"),
+              box(title = "You select (by clicking):", DT::dataTableOutput('pdd_click'), width = "100%" , height = "100%"),
+              box(title = "You select (by brushing):", DT::dataTableOutput('pdd_brush'), width = "100%" , height = "100%")
+      ),
     tabItem(tabName = "table",
             box(DT::dataTableOutput('OpenOrdersTable'), width = "100%" , height = "100%")),
     tabItem(tabName = "predictions",

@@ -1,0 +1,10 @@
+name: gedashboard
+title:
+account: dmdii
+server: shinyapps.io
+appId: 218954
+bundleId: 999313
+url: https://dmdii.shinyapps.io/gedashboard/
+when: 1506488901.00117
+asMultiple: FALSE
+asStatic: FALSE
