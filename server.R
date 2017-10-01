@@ -8,8 +8,8 @@ library(DT)
 load("GE Dashboard.RData")
 
 #Change format to date
-df.ge$Purchase.Order.Date <- as.Date(df.ge$Purchase.Order.Date, format="%b %d, %Y")
-df.ge$Predicted.Delivery.Date <- as.Date(df.ge$Predicted.Delivery.Date, format="%b %d, %Y")
+df.ge$Purchase.Order.Date <- as.Date(df.ge$Purchase.Order.Date, format="%b %d, %Y", origin="1960-10-01")
+df.ge$Predicted.Delivery.Date <- as.Date(df.ge$Purchase.Order.Date, format="%b %d, %Y", origin="1960-10-01")
 
 #data frame for the bar chart
 ge.od.bar <- as.data.frame(table(df.ge$Purchase.Order.Date))
@@ -110,13 +110,13 @@ server <- function(input, output, session) {
   #Prediction tab
   observeEvent(input$predictButton, {
     df.temp <- df.ge[0,c(4,5,6,9)] #plant, abc, quantity, pdt
-    df.temp[1,1] <- 3267
+    df.temp[1,1] <- input$predictPlant
     df.temp[1,2] <- df.ge$`ABC Indicator`[df.ge$`Material Number`==input$predictMaterial][1]
     df.temp[1,3] <- input$predictQuantity
     df.temp[1,4] <- input$predictPdt
     colnames(df.temp) <- c("Plnt", "ABC.Indicator", "Quantity", "Pdt")
     
-    pred.temp <- predict(rf.quantReg,newdata = df.temp[,c(2,3,4)],what=c(0.025,0.975))
+    pred.temp <- predict(rf.quantReg,newdata = df.temp,what=c(0.025,0.975))
     
     upperPred <- pred.temp[2]
     middlePred <- predict(rf.reg, newdata = df.temp)
