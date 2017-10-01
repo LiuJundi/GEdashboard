@@ -47,7 +47,7 @@ body <- dashboardBody(
     tabItem(tabName = "pdd_plots",
               box(title = "Bar Chart for Open Orders", plotlyOutput(outputId = "pdd_barchart"), width = "100%"),
               box(title = 'Please select the date range: ', dateRangeInput("deliver_date", NULL,
-                                                                           start  = "2017-04-15",
+                                                                           start  = "2017-02-15",
                                                                            end    = "2017-08-17",
                                                                            min    = "2016-01-01",
                                                                            max    = "2017-12-31",

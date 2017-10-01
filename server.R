@@ -38,7 +38,7 @@ server <- function(input, output, session) {
     ge.tmp <- ge.tmp[ge.tmp$OrderDate <= end.date,]
     ge.tmp$OrderDate <- format(as.Date(ge.tmp$OrderDate), "%b %d,%y")
     ge.tmp$OrderDate <- factor(ge.tmp$OrderDate, levels = ge.tmp[["OrderDate"]])
-    plot_ly(ge.tmp) %>%
+    plot_ly(ge.tmp, source = "od") %>%
       add_trace(x = ~OrderDate, y = ~NumberofOrders, type = 'bar', hoverinfo = 'text', marker=list(color="darkslateblue"),
                 text = ~paste('Purchase Date: ', OrderDate,
                               ' Number of Open Orders: ', NumberofOrders)) %>% 
@@ -58,7 +58,7 @@ server <- function(input, output, session) {
     ge.tmp <- ge.tmp[ge.tmp$PredictedDate <= end.date,]
     ge.tmp$PredictedDate <- format(as.Date(ge.tmp$PredictedDate), "%b %d,%y")
     ge.tmp$PredictedDate <- factor(ge.tmp$PredictedDate, levels = ge.tmp[["PredictedDate"]])
-    plot_ly(ge.tmp) %>%
+    plot_ly(ge.tmp, source = "pdd") %>%
       add_trace(x = ~PredictedDate, y = ~NumberofOrders, type = 'bar', hoverinfo = 'text', marker=list(color="darkslateblue"),
                 text = ~paste('Predicted Date: ', PredictedDate,
                               ' Number of Open Orders: ', NumberofOrders)) %>% 
@@ -72,7 +72,7 @@ server <- function(input, output, session) {
   })
   
   output$od_click <- DT::renderDataTable({
-    d <- event_data("plotly_click")
+    d <- event_data("plotly_click", source = "od")
     if (is.null(d)) NULL else {
       tmp <- as.Date(as.list(d)$x, format = "%b %d,%y")
       df.ge[df.ge$`Purchase Order Date` == tmp,]
@@ -80,7 +80,7 @@ server <- function(input, output, session) {
   })
   
   output$od_brush <- DT::renderDataTable({
-    d <- event_data("plotly_selected")
+    d <- event_data("plotly_selected", source = "od")
     if (is.null(d)) NULL else {
       dt <- as.list(d)$x+which(ge.od.bar$OrderDate == input$purchase_date[1])
       tmp <- ge.od.bar$OrderDate[dt]
@@ -90,7 +90,7 @@ server <- function(input, output, session) {
   })
   
   output$pdd_click <- DT::renderDataTable({
-    d <- event_data("plotly_click")
+    d <- event_data("plotly_click", source = "pdd")
     if (is.null(d)) NULL else {
       tmp <- as.Date(as.list(d)$x, format = "%b %d,%y")
       df.ge[df.ge$`Predicted Delivery Date` == tmp,]
@@ -98,7 +98,7 @@ server <- function(input, output, session) {
   })
   
   output$pdd_brush <- DT::renderDataTable({
-    d <- event_data("plotly_selected")
+    d <- event_data("plotly_selected", source = "pdd")
     if (is.null(d)) NULL else {
       dt <- as.list(d)$x+which(ge.pdd.bar$PredictedDate == input$purchase_date[1])
       tmp <- ge.pdd.bar$PredictedDate[dt]
